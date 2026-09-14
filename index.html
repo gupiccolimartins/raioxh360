@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Você está travado ou só ocupado?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-deep:#0a2825;
+    --teal:#0f3a35;
+    --teal-card:#123f3a;
+    --gold:#c6a15b;
+    --gold-light:#e2c485;
+    --text:#f4f1ea;
+    --text-dim:#aebfba;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ }
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Poppins',Arial,sans-serif;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(198,161,91,0.08), transparent 45%),
+      linear-gradient(160deg,var(--teal-deep),#071e1c 70%);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 16px;
+  }
+  .wrap{max-width:460px;width:100%;}
+
+  /* ---- brand header, mirrors the slide badge ---- */
+  .brand{
+    display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:22px;
+  }
+  .brand svg{width:26px;height:26px;flex-shrink:0;}
+  .brand-text{line-height:1.1;text-align:left;}
+  .brand-text .h1line{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);}
+  .brand-text .h1line b{color:var(--gold);}
+  .brand-text .h2line{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);opacity:.85;}
+
+  .badge{
+    display:inline-block;
+    background:var(--gold);
+    color:#132521;
+    font-weight:800;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    padding:5px 12px;
+    border-radius:3px;
+    margin-bottom:16px;
+  }
+
+  .card{
+    background:var(--teal-card);
+    border:1px solid rgba(198,161,91,0.3);
+    border-radius:16px;
+    padding:30px 24px;
+    box-shadow:0 24px 50px rgba(0,0,0,0.4);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;top:-40%;right:-30%;
+    width:220px;height:220px;
+    background:radial-gradient(circle, rgba(198,161,91,0.15), transparent 70%);
+    pointer-events:none;
+  }
+
+  h1{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:30px;
+    letter-spacing:.5px;
+    line-height:1.15;
+    margin-bottom:12px;
+    color:var(--text);
+  }
+  h1 span{color:var(--gold);}
+  .sub{color:var(--text-dim);font-size:14px;line-height:1.55;margin-bottom:24px;}
+
+  .progress-track{
+    width:100%;height:5px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:20px;
+  }
+  .progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));width:0%;transition:width .35s ease;
+  }
+  .q-count{font-size:11px;color:var(--gold-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;font-weight:600;}
+  .question{font-size:19px;font-weight:600;margin-bottom:20px;line-height:1.38;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    text-align:left;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.12);
+    color:var(--text);
+    padding:14px 16px;
+    border-radius:10px;
+    font-size:14.5px;
+    line-height:1.4;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .opt:hover{border-color:var(--gold);background:rgba(198,161,91,0.1);}
+  .opt.selected{border-color:var(--gold);background:rgba(198,161,91,0.16);}
+  .nav{display:flex;justify-content:space-between;margin-top:24px;gap:10px;}
+  .btn{
+    background:linear-gradient(90deg,var(--gold),var(--gold-light));
+    color:#132521;
+    border:none;
+    padding:13px 22px;
+    border-radius:99px;
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .btn:disabled{opacity:.3;cursor:not-allowed;}
+  .btn:not(:disabled):hover{transform:translateY(-1px);}
+  .btn-ghost{
+    background:transparent;color:var(--text-dim);border:1px solid rgba(255,255,255,0.15);
+  }
+  .hidden{display:none;}
+
+  .result-tag{
+    display:inline-block;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    font-weight:700;
+    color:#e2836f;
+    background:rgba(226,131,111,0.12);
+    border:1px solid rgba(226,131,111,0.35);
+    padding:6px 14px;
+    border-radius:99px;
+    margin-bottom:16px;
+  }
+  .result-tag.good{
+    color:var(--gold-light);
+    background:rgba(198,161,91,0.14);
+    border-color:rgba(198,161,91,0.4);
+  }
+  .result-title{font-family:'Bebas Neue',sans-serif;font-size:27px;letter-spacing:.3px;line-height:1.25;margin-bottom:14px;}
+  .result-text{font-size:14.5px;color:var(--text-dim);line-height:1.65;margin-bottom:22px;}
+  .cta{
+    display:block;
+    text-align:center;
+    background:linear-gradient(90deg,var(--gold),var(--gold-light));
+    color:#132521;
+    padding:15px;
+    border-radius:10px;
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:.3px;
+    text-transform:uppercase;
+    text-decoration:none;
+  }
+  .restart{
+    display:block;text-align:center;margin-top:16px;color:var(--text-dim);font-size:12.5px;cursor:pointer;text-decoration:underline;
+  }
+  .footer-note{
+    text-align:center;font-size:11px;color:var(--text-dim);opacity:.6;margin-top:16px;letter-spacing:.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <svg viewBox="0 0 100 70" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 15 L20 0 L28 22 L5 18 L32 34 L50 28 Z" fill="#c6a15b"/>
+      <path d="M50 15 L80 0 L72 22 L95 18 L68 34 L50 28 Z" fill="#e2c485"/>
+      <rect x="44" y="26" width="12" height="34" fill="#c6a15b"/>
+    </svg>
+    <div class="brand-text">
+      <div class="h1line">MENTORIA <b>H360</b></div>
+      <div class="h2line">Hermes · Escola de Negócios</div>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <!-- INTRO -->
+    <div id="intro">
+      <span class="badge">Diagnóstico rápido</span>
+      <h1>Você está travado ou só <span>ocupado</span>?</h1>
+      <p class="sub">5 perguntas sobre como você realmente se sente em relação à sua carreira hoje. Sem certo ou errado — só sinceridade com você mesmo.</p>
+      <button class="btn" onclick="startQuiz()" style="width:100%;">Começar →</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="hidden">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="q-count" id="qCount">Pergunta 1 de 5</div>
+      <div class="question" id="qText"></div>
+      <div class="options" id="qOptions"></div>
+      <div class="nav">
+        <button class="btn btn-ghost" onclick="prevQuestion()" id="btnPrev">Voltar</button>
+        <button class="btn" onclick="nextQuestion()" id="btnNext" disabled>Próxima →</button>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" class="hidden"></div>
+
+  </div>
+  <div class="footer-note">Isso não é ranking. É um raio-x do seu momento atual.</div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Quando o mês fecha e você olha pro que entrou no bolso, o que você sente primeiro?",
+    options: [
+      {t:"Segurança — sei que consigo repetir isso", v:0},
+      {t:"Alívio, mas já vem a ansiedade do mês seguinte", v:1},
+      {t:"Uma frustração que tento não encarar de frente", v:2},
+      {t:"Um misto de cansaço e vergonha de não ter feito mais", v:3},
+    ]
+  },
+  {
+    q: "Como é a sensação de encerrar o dia de trabalho?",
+    options: [
+      {t:"De dever cumprido, sei exatamente o que avancei", v:0},
+      {t:"Cansaço bom, mas com dúvida se avancei de verdade", v:1},
+      {t:"Um vazio, como se tivesse corrido o dia todo pra lugar nenhum", v:2},
+      {t:"Exaustão, e a mente já pesada com o dia seguinte", v:3},
+    ]
+  },
+  {
+    q: "Quando vê outro corretor comemorando uma venda grande, o que se passa dentro de você?",
+    options: [
+      {t:"Alegria genuína, torço e sei que minha hora chega", v:0},
+      {t:"Uma pontinha de comparação que tento afastar", v:1},
+      {t:"Uma cobrança forte comigo mesmo, quase incômoda", v:2},
+      {t:"Um desânimo silencioso, como se aquilo nunca fosse acontecer comigo", v:3},
+    ]
+  },
+  {
+    q: "No momento de uma negociação difícil, o que toma conta de você por dentro?",
+    options: [
+      {t:"Confiança — sei conduzir mesmo sob pressão", v:0},
+      {t:"Um friozinho na barriga, mas eu sigo em frente", v:1},
+      {t:"Medo de perder o negócio e acabar cedendo demais", v:2},
+      {t:"Um branco — trava e eu só quero que aquilo acabe", v:3},
+    ]
+  },
+  {
+    q: "Se você se imaginar daqui a um ano, exatamente na mesma rotina de hoje, o que sente?",
+    options: [
+      {t:"Tranquilidade, porque essa rotina já me leva onde quero", v:0},
+      {t:"Um incômodo leve, sei que dava pra ser diferente", v:1},
+      {t:"Uma angústia real de estar perdendo tempo", v:2},
+      {t:"Medo de estar no mesmo lugar, ou pior, daqui a um ano", v:3},
+    ]
+  }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+function startQuiz(){
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  document.getElementById('qCount').textContent = `Pergunta ${current+1} de ${questions.length}`;
+  document.getElementById('progressFill').style.width = `${(current/(questions.length))*100}%`;
+  document.getElementById('qText').textContent = q.q;
+  const optsDiv = document.getElementById('qOptions');
+  optsDiv.innerHTML = '';
+  q.options.forEach((opt, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt' + (answers[current]===i ? ' selected' : '');
+    btn.textContent = opt.t;
+    btn.onclick = ()=>selectOption(i);
+    optsDiv.appendChild(btn);
+  });
+  document.getElementById('btnPrev').disabled = current===0;
+  document.getElementById('btnNext').disabled = answers[current]===null;
+  document.getElementById('btnNext').textContent = current===questions.length-1 ? 'Ver resultado →' : 'Próxima →';
+}
+
+function selectOption(i){
+  answers[current] = i;
+  renderQuestion();
+}
+
+function nextQuestion(){
+  if(answers[current]===null) return;
+  if(current < questions.length-1){
+    current++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQuestion(){
+  if(current>0){
+    current--;
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  const total = answers.reduce((acc,i,idx)=> acc + questions[idx].options[i].v, 0);
+  document.getElementById('quiz').classList.add('hidden');
+  const resultDiv = document.getElementById('result');
+  resultDiv.classList.remove('hidden');
+
+  let tag, title, text, tagClass='';
+  if(total <= 3){
+    tag = "No controle";
+    title = "Você está numa base sólida — o próximo passo é escalar.";
+    text = "Sua relação com a carreira hoje é de confiança, não de sobrevivência. O que separa você do próximo patamar não é esforço, é sistematizar o que já funciona pra transformar performance em previsibilidade de longo prazo.";
+    tagClass='good';
+  } else if(total <= 7){
+    tag = "Incômodo silencioso";
+    title = "Você sente que podia ser diferente, e essa sensação não é bobagem.";
+    text = "Não é desânimo à toa — é o sinal de que existe um gargalo específico te segurando, mesmo com competência de sobra. Um diagnóstico completo mostra exatamente onde está essa trava.";
+    tagClass='good';
+  } else if(total <= 11){
+    tag = "Ansiedade de resultado";
+    title = "Você está carregando um peso que não deveria ser só seu.";
+    text = "Viver de mês em mês, comparando sua trajetória com a dos outros, sentindo que o esforço não corresponde ao resultado — isso desgasta antes mesmo de aparecer no extrato. Esse ciclo tem raiz em processo, não em falta de capacidade.";
+  } else {
+    tag = "Ponto de virada";
+    title = "O que você sente hoje é o sinal de que algo precisa mudar de verdade.";
+    text = "Medo do próximo mês, vergonha de olhar pro resultado, o peso de se comparar e sentir que fica pra trás — isso não se resolve com mais esforço isolado. Se resolve com um raio-x honesto do que está travando você, e um plano pra sair desse ciclo.";
+  }
+
+  resultDiv.innerHTML = `
+    <span class="result-tag ${tagClass}">${tag}</span>
+    <div class="result-title">${title}</div>
+    <p class="result-text">${text}</p>
+    <a class="cta" href="https://wa.me/5519976034074?text=Fiz%20o%20quiz%20e%20quero%20entender%20melhor%20a%20Mentoria%20H360" target="_blank">Quero destravar meu resultado →</a>
+    <span class="restart" onclick="restart()">Refazer o diagnóstico</span>
+  `;
+}
+
+function restart(){
+  current = 0;
+  answers = new Array(questions.length).fill(null);
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('intro').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
